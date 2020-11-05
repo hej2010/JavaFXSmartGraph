@@ -184,14 +184,15 @@ public class SmartGraphPanel<V, E> extends Pane {
         this.graphProperties = properties != null ? properties : new SmartGraphProperties();
         this.placementStrategy = placementStrategy != null ? placementStrategy : new SmartRandomPlacementStrategy();
 
-        this.edgesWithArrows = this.graphProperties.getUseEdgeArrow();
+        //this.edgesWithArrows = this.graphProperties.getUseEdgeArrow();
+        this.edgesWithArrows = (theGraph instanceof Digraph);
 
         this.repulsionForce = this.graphProperties.getRepulsionForce();
         this.attractionForce = this.graphProperties.getAttractionForce();
         this.attractionScale = this.graphProperties.getAttractionScale();
 
         vertexNodes = new HashMap<>();
-        edgeNodes = new HashMap<>(); 
+        edgeNodes = new HashMap<>();
 
         //set stylesheet and class
         loadStylesheet(cssFile);
