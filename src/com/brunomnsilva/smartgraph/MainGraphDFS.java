@@ -26,10 +26,7 @@ package com.brunomnsilva.smartgraph;
 import com.brunomnsilva.smartgraph.MainTree;
 import com.brunomnsilva.smartgraph.containers.SmartGraphDemoContainer;
 import com.brunomnsilva.smartgraph.graph.*;
-import com.brunomnsilva.smartgraph.graphview.SmartCircularSortedPlacementStrategy;
-import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
-import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy;
-import com.brunomnsilva.smartgraph.graphview.SmartStylableNode;
+import com.brunomnsilva.smartgraph.graphview.*;
 import com.brunomnsilva.smartgraph.tree.Tree;
 import com.brunomnsilva.smartgraph.tree.TreeImpl;
 import com.brunomnsilva.smartgraph.tree.TreePosition;
@@ -77,9 +74,7 @@ public class MainGraphDFS extends Application {
             System.out.println("Converting to tree starting at: " + selectedVertex.element());
 
             Tree<String> treeDFS = graph2tree(g, selectedVertex);
-            Digraph<String, Integer> digraph = MainTree.tree2digraph(treeDFS);
-
-            SmartGraphPanel<String, Integer> treeView = new SmartGraphPanel(digraph);
+            SmartTreePanel<String> treeView = new SmartTreePanel<>(treeDFS);
             Scene scene2 = new Scene(new SmartGraphDemoContainer(treeView), 1024, 768);
 
             Stage stage2 = new Stage(StageStyle.DECORATED);
