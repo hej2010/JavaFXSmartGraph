@@ -220,6 +220,9 @@ public class GraphEdgeList<V, E> implements Graph<V, E> {
 
     @Override
     public V replace(Vertex<V> v, V newElement) throws InvalidVertexException {
+        /* Special case: replace with same element.. */
+        if(v.element().equals(newElement)) return v.element();
+
         if (existsVertexWith(newElement)) {
             throw new InvalidVertexException("There's already a vertex with this element.");
         }
@@ -234,6 +237,9 @@ public class GraphEdgeList<V, E> implements Graph<V, E> {
 
     @Override
     public E replace(Edge<E, V> e, E newElement) throws InvalidEdgeException {
+        /* Special case: replace with same element.. */
+        if(e.element().equals(newElement)) return e.element();
+
         if (existsEdgeWith(newElement)) {
             throw new InvalidEdgeException("There's already an edge with this element.");
         }

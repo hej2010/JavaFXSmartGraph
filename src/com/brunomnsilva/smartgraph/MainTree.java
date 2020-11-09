@@ -2,7 +2,7 @@ package com.brunomnsilva.smartgraph;
 
 import com.brunomnsilva.smartgraph.containers.SmartGraphDemoContainer;
 import com.brunomnsilva.smartgraph.graph.*;
-import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
+import com.brunomnsilva.smartgraph.graphview.SmartTreePanel;
 import com.brunomnsilva.smartgraph.tree.Tree;
 import com.brunomnsilva.smartgraph.tree.TreeImpl;
 import com.brunomnsilva.smartgraph.tree.TreePosition;
@@ -12,8 +12,12 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MainTree extends Application {
+
+    private volatile boolean running;
 
     @Override
     public void start(Stage ignored) throws Exception {
@@ -23,11 +27,8 @@ public class MainTree extends Application {
         System.out.println("Size: " + tree.size());
         System.out.println("Height: " + tree.height());
 
-        Digraph<String, Integer> digraph = tree2digraph(tree);
-        System.out.println(digraph);
-
-        SmartGraphPanel<String, Integer> graphView = new SmartGraphPanel(digraph);
-        Scene scene = new Scene(new SmartGraphDemoContainer(graphView), 1024, 768);
+        SmartTreePanel<String> treeView = new SmartTreePanel(tree);
+        Scene scene = new Scene(new SmartGraphDemoContainer(treeView), 1024, 768);
 
         Stage stage = new Stage(StageStyle.DECORATED);
         stage.setTitle("JavaFX SmartGraph Visualization (Tree)");
@@ -35,10 +36,17 @@ public class MainTree extends Application {
         stage.setMinWidth(800);
         stage.setScene(scene);
         stage.show();
-        graphView.init();
+        treeView.init();
 
-        graphView.getStylableVertex(tree.root().element()).setStyle("-fx-fill: gold; -fx-stroke: brown;");
+        treeView.getStylableVertex(tree.root().element()).setStyle("-fx-fill: gold; -fx-stroke: brown;");
 
+        /*
+        Uncomment lines to test adding of new elements
+         */
+        continuously_test_adding_elements(tree, treeView);
+        stage.setOnCloseRequest(event -> {
+            running = false;
+        });
     }
 
     private static Tree<String> build_tree() {
@@ -53,6 +61,56 @@ public class MainTree extends Application {
         tree.insert(sales_manager, "Shipping Supervisor");
 
         return tree;
+    }
+
+    private static final Random random = new Random(/* seed to reproduce*/);
+
+    private void continuously_test_adding_elements(Tree<String> tree, SmartTreePanel<String> treeView) {
+        //update graph
+        running = true;
+        final long ITERATION_WAIT = 3000; //milliseconds
+
+        Runnable r;
+        r = () -> {
+            int count = 0;
+
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            while (running) {
+                try {
+                    Thread.sleep(ITERATION_WAIT);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                int size = tree.size();
+                int randomIndex = random.nextInt(size);
+
+                TreePosition<String> parent = null;
+                int i = 0;
+                for(TreePosition<String> p : tree.positions()) {
+                    if(i == randomIndex) {
+                        parent = p;
+                        break;
+                    }
+                    i++;
+                }
+
+                String id = String.format("%02d", ++count);
+                tree.insert(parent, ("N" + id));
+
+                System.out.println("Random parent: " + parent.element());
+
+                treeView.update();
+
+            }
+        };
+
+        new Thread(r).start();
     }
 
     public static <V> Digraph<V,Integer> tree2digraph(Tree<V> tree) {

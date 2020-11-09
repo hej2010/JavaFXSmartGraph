@@ -272,6 +272,10 @@ public class SmartGraphPanel<V, E> extends Pane {
         this.initialized = true;
     }
 
+    protected Graph<V, E> getUnderlyingGraph() {
+        return this.theGraph;
+    }
+
     /**
      * Returns the property used to toggle the automatic layout of vertices.
      * 
@@ -359,7 +363,7 @@ public class SmartGraphPanel<V, E> extends Pane {
 
     }
 
-    private synchronized void updateNodes() {
+    protected synchronized void updateNodes() {
         removeNodes();
         insertNodes();
         updateLabels();
