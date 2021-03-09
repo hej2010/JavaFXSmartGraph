@@ -990,7 +990,7 @@ public class SmartGraphPanel<V, E> extends Pane {
      */
     private void enableDoubleClickListener() {
         setOnMouseClicked((MouseEvent mouseEvent) -> {
-            if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.isStillSincePress()) {
                 int clickCount = mouseEvent.getClickCount();
                 if (clickCount == 1 || clickCount == 2) {
                     //no need to continue otherwise
